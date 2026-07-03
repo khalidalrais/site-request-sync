@@ -22,6 +22,7 @@ import { UrgencyBadge } from "@/components/requests/UrgencyBadge";
 import { StatusBadge } from "@/components/requests/StatusBadge";
 import { RequestDetailSheet } from "@/components/requests/RequestDetailSheet";
 import { RequestFormDialog } from "@/components/requests/RequestFormDialog";
+import { InsightsPanel } from "@/components/requests/InsightsPanel";
 
 export const Route = createFileRoute("/")({
   head: () => ({
