@@ -35,6 +35,7 @@ export const useRequestsStore = create<State>((set, get) => ({
   requests: seedRequests,
   boqLines: seedBoqLines,
   nextSeq: seedRequests.length + 1,
+  pmIndex: 0,
 
   createRequest: (input) => {
     const seq = get().nextSeq;
