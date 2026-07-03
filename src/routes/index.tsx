@@ -60,7 +60,7 @@ function Dashboard() {
   const boqLines = useRequestsStore((s) => s.boqLines);
 
   const [filter, setFilter] = useState<Filter>("All");
-  const [sort, setSort] = useState<SortKey>("urgency");
+  
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
