@@ -92,6 +92,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "BuildFlow — Procurement Requests" },
+      { name: "description", content: "Site Request Hub tracks construction material requests from site engineers through approval, ordering, and receipt." },
+      { property: "og:description", content: "Site Request Hub tracks construction material requests from site engineers through approval, ordering, and receipt." },
+      { name: "twitter:description", content: "Site Request Hub tracks construction material requests from site engineers through approval, ordering, and receipt." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/15714dbb-156a-472d-9f73-5edd24174f00/id-preview-e15e4df0--84caea35-5c23-44ab-80bd-82985f29fdae.lovable.app-1783068130527.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/15714dbb-156a-472d-9f73-5edd24174f00/id-preview-e15e4df0--84caea35-5c23-44ab-80bd-82985f29fdae.lovable.app-1783068130527.png" },
     ],
     links: [
       {
