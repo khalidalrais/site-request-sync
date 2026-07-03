@@ -190,7 +190,7 @@ function Dashboard() {
               <SelectContent>
                 <SelectItem value="urgency">Sort: Urgency</SelectItem>
                 <SelectItem value="neededBy">Sort: Needed-by</SelectItem>
-                <SelectItem value="created">Sort: Created</SelectItem>
+                
               </SelectContent>
             </Select>
           </div>
