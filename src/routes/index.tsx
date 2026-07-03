@@ -154,29 +154,18 @@ function Dashboard() {
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
-          <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
-            <TabsList>
-              {filters.map((f) => (
-                <TabsTrigger key={f} value={f}>
-                  {f}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search item, site, BoQ…"
-                className="pl-8 w-64"
-              />
-            </div>
+        <div className="flex items-center gap-2 justify-end">
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search item, site, BoQ…"
+              className="pl-8 w-64"
+            />
           </div>
         </div>
+
 
 
 
