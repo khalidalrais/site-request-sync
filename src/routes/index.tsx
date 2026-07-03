@@ -177,8 +177,11 @@ function Dashboard() {
                 placeholder="Search item, site, BoQ…"
                 className="pl-8 w-64"
               />
+            </div>
           </div>
         </div>
+
+
 
 
 
