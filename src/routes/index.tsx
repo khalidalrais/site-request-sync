@@ -184,18 +184,18 @@ function Dashboard() {
 
 
         {/* Table */}
-        <div className="rounded-md border bg-card">
+        <div className="rounded-lg border bg-card shadow-xs overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead className="w-32">Urgency</TableHead>
-                <TableHead>Request</TableHead>
-                <TableHead>Qty</TableHead>
-                <TableHead>Site</TableHead>
-                <TableHead>Needed by</TableHead>
-                <TableHead>BoQ</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Requested by</TableHead>
+              <TableRow className="hover:bg-transparent border-b">
+                <TableHead className="h-9 w-32 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">Urgency</TableHead>
+                <TableHead className="h-9 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">Request</TableHead>
+                <TableHead className="h-9 text-right text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">Qty</TableHead>
+                <TableHead className="h-9 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">Site</TableHead>
+                <TableHead className="h-9 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">Needed by</TableHead>
+                <TableHead className="h-9 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">BoQ</TableHead>
+                <TableHead className="h-9 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">Status</TableHead>
+                <TableHead className="h-9 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">Requested by</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -211,37 +211,37 @@ function Dashboard() {
                 return (
                   <TableRow
                     key={r.id}
-                    className="cursor-pointer"
+                    className="cursor-pointer border-b last:border-b-0 hover:bg-muted/40 transition-colors"
                     onClick={() => setSelectedId(r.id)}
                   >
-                    <TableCell>
+                    <TableCell className="py-2">
                       <UrgencyBadge neededBy={r.neededBy} />
                     </TableCell>
-                    <TableCell>
-                      <div className="font-medium">{r.item}</div>
-                      <div className="text-xs text-muted-foreground font-mono">
+                    <TableCell className="py-2">
+                      <div className="font-medium text-foreground leading-tight">{r.item}</div>
+                      <div className="text-[11px] text-muted-foreground/70 font-mono mt-0.5">
                         {r.id}
                       </div>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      {r.qty} {r.unit}
+                    <TableCell className="py-2 text-right whitespace-nowrap tabular-nums font-medium">
+                      {r.qty} <span className="text-muted-foreground font-normal">{r.unit}</span>
                     </TableCell>
-                    <TableCell className="text-sm">{r.site}</TableCell>
-                    <TableCell className="text-sm whitespace-nowrap">
+                    <TableCell className="py-2 text-sm text-muted-foreground">{r.site}</TableCell>
+                    <TableCell className="py-2 text-sm text-muted-foreground whitespace-nowrap tabular-nums">
                       {format(new Date(r.neededBy), "MMM d")}
                     </TableCell>
-                    <TableCell>
-                      <div className="font-mono text-xs">{r.boqLineId}</div>
+                    <TableCell className="py-2">
+                      <div className="font-mono text-[11px] text-muted-foreground/80">{r.boqLineId}</div>
                       {boq && (
-                        <div className="text-xs text-muted-foreground truncate max-w-[180px]">
+                        <div className="text-[11px] text-muted-foreground/60 truncate max-w-[180px]">
                           {boq.section}
                         </div>
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-2">
                       <StatusBadge status={r.status} />
                     </TableCell>
-                    <TableCell className="text-sm whitespace-nowrap">
+                    <TableCell className="py-2 text-sm text-muted-foreground whitespace-nowrap">
                       {r.requestedBy}
                     </TableCell>
                   </TableRow>
@@ -250,6 +250,7 @@ function Dashboard() {
             </TableBody>
           </Table>
         </div>
+
       </main>
 
       <RequestDetailSheet
