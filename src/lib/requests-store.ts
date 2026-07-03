@@ -12,6 +12,7 @@ type State = {
   requests: Request[];
   boqLines: BoqLine[];
   nextSeq: number;
+  pmIndex: number;
   createRequest: (input: NewRequestInput) => string;
   updateRequest: (id: string, input: NewRequestInput) => void;
   approve: (id: string) => void;
@@ -20,6 +21,8 @@ type State = {
   markOrdered: (id: string, comment?: string) => void;
   markReceived: (id: string, comment?: string) => void;
 };
+
+const nextPM = (i: number) => seedPMs[i % seedPMs.length];
 
 const nowISO = () => new Date().toISOString();
 
