@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
 });
 
 type Filter = Status | "All";
-type SortKey = "urgency" | "neededBy";
+
 
 const filters: Filter[] = [
   "All",
