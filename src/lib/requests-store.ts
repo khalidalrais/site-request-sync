@@ -60,32 +60,40 @@ export const useRequestsStore = create<State>((set, get) => ({
   },
 
   approve: (id) => {
-    set((s) => ({
-      requests: s.requests.map((r) =>
-        r.id === id && r.status === "Requested"
-          ? appendHistory({ ...r, status: "Approved" as Status }, {
-              at: nowISO(),
-              actor: "PM",
-              action: "Approved as PM",
-            })
-          : r,
-      ),
-    }));
+    set((s) => {
+      const pm = nextPM(s.pmIndex);
+      return {
+        pmIndex: s.pmIndex + 1,
+        requests: s.requests.map((r) =>
+          r.id === id && r.status === "Requested"
+            ? appendHistory({ ...r, status: "Approved" as Status }, {
+                at: nowISO(),
+                actor: pm,
+                action: "Approved",
+              })
+            : r,
+        ),
+      };
+    });
   },
 
   pushBack: (id, comment) => {
-    set((s) => ({
-      requests: s.requests.map((r) =>
-        r.id === id && r.status === "Requested"
-          ? appendHistory({ ...r, status: "Rejected" as Status }, {
-              at: nowISO(),
-              actor: "PM",
-              action: "Pushed back",
-              comment,
-            })
-          : r,
-      ),
-    }));
+    set((s) => {
+      const pm = nextPM(s.pmIndex);
+      return {
+        pmIndex: s.pmIndex + 1,
+        requests: s.requests.map((r) =>
+          r.id === id && r.status === "Requested"
+            ? appendHistory({ ...r, status: "Rejected" as Status }, {
+                at: nowISO(),
+                actor: pm,
+                action: "Pushed back",
+                comment,
+              })
+            : r,
+        ),
+      };
+    });
   },
 
   resubmit: (id) => {
