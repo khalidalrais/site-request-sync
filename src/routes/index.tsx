@@ -108,8 +108,6 @@ function Dashboard() {
       });
     } else if (sort === "neededBy") {
       sorted.sort((a, b) => +new Date(a.neededBy) - +new Date(b.neededBy));
-    } else {
-      sorted.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
     }
     return sorted;
   }, [requests, filter, sort, query]);
