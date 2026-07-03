@@ -92,7 +92,7 @@ ${lines}`;
         } catch {
           /* fall through */
         }
-        console.warn("explainInsights salvage failed", error.text.slice(0, 300));
+        console.warn("explainInsights salvage failed. RAW:", error.text);
       }
       console.warn("explainInsights failed", message);
       return { items: [], degraded: true, error: message };
