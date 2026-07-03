@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { seedBoqLines, seedRequests } from "./seed-data";
+import { seedBoqLines, seedPMs, seedRequests } from "./seed-data";
 import type {
   BoqLine,
   HistoryEntry,
@@ -12,6 +12,7 @@ type State = {
   requests: Request[];
   boqLines: BoqLine[];
   nextSeq: number;
+  pmIndex: number;
   createRequest: (input: NewRequestInput) => string;
   updateRequest: (id: string, input: NewRequestInput) => void;
   approve: (id: string) => void;
@@ -20,6 +21,8 @@ type State = {
   markOrdered: (id: string, comment?: string) => void;
   markReceived: (id: string, comment?: string) => void;
 };
+
+const nextPM = (i: number) => seedPMs[i % seedPMs.length];
 
 const nowISO = () => new Date().toISOString();
 
@@ -32,6 +35,7 @@ export const useRequestsStore = create<State>((set, get) => ({
   requests: seedRequests,
   boqLines: seedBoqLines,
   nextSeq: seedRequests.length + 1,
+  pmIndex: 0,
 
   createRequest: (input) => {
     const seq = get().nextSeq;
@@ -56,32 +60,40 @@ export const useRequestsStore = create<State>((set, get) => ({
   },
 
   approve: (id) => {
-    set((s) => ({
-      requests: s.requests.map((r) =>
-        r.id === id && r.status === "Requested"
-          ? appendHistory({ ...r, status: "Approved" as Status }, {
-              at: nowISO(),
-              actor: "PM",
-              action: "Approved as PM",
-            })
-          : r,
-      ),
-    }));
+    set((s) => {
+      const pm = nextPM(s.pmIndex);
+      return {
+        pmIndex: s.pmIndex + 1,
+        requests: s.requests.map((r) =>
+          r.id === id && r.status === "Requested"
+            ? appendHistory({ ...r, status: "Approved" as Status }, {
+                at: nowISO(),
+                actor: pm,
+                action: "Approved",
+              })
+            : r,
+        ),
+      };
+    });
   },
 
   pushBack: (id, comment) => {
-    set((s) => ({
-      requests: s.requests.map((r) =>
-        r.id === id && r.status === "Requested"
-          ? appendHistory({ ...r, status: "Rejected" as Status }, {
-              at: nowISO(),
-              actor: "PM",
-              action: "Pushed back",
-              comment,
-            })
-          : r,
-      ),
-    }));
+    set((s) => {
+      const pm = nextPM(s.pmIndex);
+      return {
+        pmIndex: s.pmIndex + 1,
+        requests: s.requests.map((r) =>
+          r.id === id && r.status === "Requested"
+            ? appendHistory({ ...r, status: "Rejected" as Status }, {
+                at: nowISO(),
+                actor: pm,
+                action: "Pushed back",
+                comment,
+              })
+            : r,
+        ),
+      };
+    });
   },
 
   resubmit: (id) => {
