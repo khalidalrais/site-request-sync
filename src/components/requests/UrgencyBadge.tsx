@@ -2,10 +2,10 @@ import { cn } from "@/lib/utils";
 import { getUrgency } from "@/lib/urgency";
 
 const styles: Record<string, string> = {
-  Overdue: "bg-destructive/15 text-destructive border-destructive/30",
-  Critical: "bg-orange-500/15 text-orange-700 border-orange-500/30 dark:text-orange-300",
-  Soon: "bg-amber-500/15 text-amber-700 border-amber-500/30 dark:text-amber-300",
-  Normal: "bg-muted text-muted-foreground border-border",
+  Overdue: "bg-rose-50 text-rose-700 ring-rose-600/10 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-400/20",
+  Critical: "bg-orange-50 text-orange-700 ring-orange-600/10 dark:bg-orange-500/10 dark:text-orange-300 dark:ring-orange-400/20",
+  Soon: "bg-amber-50 text-amber-800 ring-amber-600/10 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/20",
+  Normal: "bg-muted text-muted-foreground ring-border",
 };
 
 export function UrgencyBadge({ neededBy }: { neededBy: string }) {
@@ -19,7 +19,7 @@ export function UrgencyBadge({ neededBy }: { neededBy: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap",
+        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset whitespace-nowrap tabular-nums",
         styles[level],
       )}
     >
