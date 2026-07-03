@@ -50,6 +50,25 @@ export const seedBoqLines: BoqLine[] = [
   },
 ];
 
+export const seedEngineers: string[] = [
+  "Eng. A. Khan",
+  "Eng. M. Patel",
+  "Eng. S. Owusu",
+  "Eng. R. Haddad",
+  "Eng. L. Chen",
+];
+
+export const seedSites: string[] = [
+  "Tower A – Core L4",
+  "Tower A – Basement",
+  "Tower A – Column pour L5",
+  "Tower B – Raft L-1",
+  "Tower B – Roof",
+  "Villa 12 – GF",
+  "Villa 12 – Slab",
+  "Villa 12 – Site prep",
+];
+
 export const seedRequests: Request[] = [
   {
     id: "REQ-0001",
