@@ -59,9 +59,8 @@ export function computeInsights(
         ? recentSum >= 10 // any meaningful new burn where there was none
         : recentBurnPerDay > priorBurnPerDay * 1.25);
 
-    // Projected total = consumed + recentBurn * 30 days forward (cap at budget window).
-    const projectedTotal =
-      consumed + Math.max(recentBurnPerDay, 0) * Math.min(30, daysToExhaust ?? 30);
+    // Projected total = consumed + 30 more days at the recent burn rate.
+    const projectedTotal = consumed + Math.max(recentBurnPerDay, 0) * 30;
     const projectedOverrunPct = projectedTotal / line.qtyBudgeted - 1;
 
     let severity: FlaggedLine["severity"] | null = null;
