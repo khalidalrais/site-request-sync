@@ -93,19 +93,16 @@ function Dashboard() {
       );
     }
     const sorted = [...rows];
-    if (sort === "urgency") {
-      sorted.sort((a, b) => {
-        const ua = getUrgency(a.neededBy);
-        const ub = getUrgency(b.neededBy);
-        const r = urgencyRank[ua.level] - urgencyRank[ub.level];
-        if (r !== 0) return r;
-        return +new Date(a.neededBy) - +new Date(b.neededBy);
-      });
-    } else if (sort === "neededBy") {
-      sorted.sort((a, b) => +new Date(a.neededBy) - +new Date(b.neededBy));
-    }
+    sorted.sort((a, b) => {
+      const ua = getUrgency(a.neededBy);
+      const ub = getUrgency(b.neededBy);
+      const r = urgencyRank[ua.level] - urgencyRank[ub.level];
+      if (r !== 0) return r;
+      return +new Date(a.neededBy) - +new Date(b.neededBy);
+    });
     return sorted;
-  }, [requests, filter, sort, query]);
+  }, [requests, filter, query]);
+
 
   const selected = requests.find((r) => r.id === selectedId) ?? null;
 
