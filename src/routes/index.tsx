@@ -136,6 +136,7 @@ function Dashboard() {
       </header>
 
       <main className="mx-auto max-w-7xl px-6 py-6 space-y-4">
+        <InsightsPanel />
         {/* Summary chips */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
           {filters.map((f) => (
