@@ -58,6 +58,14 @@ export const seedEngineers: string[] = [
   "Eng. L. Chen",
 ];
 
+export const seedPMs: string[] = [
+  "PM Sara Khan",
+  "PM Omar Al-Farsi",
+  "PM Nadia Rahman",
+  "PM Yusuf Malik",
+  "PM Layla Nasser",
+];
+
 export const seedSites: string[] = [
   "Tower A – Core L4",
   "Tower A – Basement",
