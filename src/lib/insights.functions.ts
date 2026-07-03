@@ -70,10 +70,31 @@ ${lines}`;
       });
       return { items: output.items, degraded: false };
     } catch (error) {
-      let text: string | undefined;
-      if (NoObjectGeneratedError.isInstance(error)) text = error.text;
       const message = error instanceof Error ? error.message : String(error);
-      console.warn("explainInsights failed", message, text?.slice(0, 200));
+      if (NoObjectGeneratedError.isInstance(error) && error.text) {
+        // Try to salvage: strip code fences, parse JSON, coerce to schema.
+        const raw = error.text.replace(/```json|```/g, "").trim();
+        try {
+          const parsed = JSON.parse(raw);
+          const arr = Array.isArray(parsed) ? parsed : parsed.items ?? [];
+          const items = arr
+            .map((x: unknown) => {
+              if (!x || typeof x !== "object") return null;
+              const o = x as Record<string, unknown>;
+              const id = o.boqLineId ?? o.id;
+              const headline = o.headline ?? o.title;
+              const body = o.body ?? o.description ?? o.summary;
+              if (typeof id !== "string" || typeof headline !== "string" || typeof body !== "string") return null;
+              return { boqLineId: id, headline, body };
+            })
+            .filter((x: InsightNarrative | null): x is InsightNarrative => x !== null);
+          if (items.length > 0) return { items, degraded: false };
+        } catch {
+          /* fall through */
+        }
+        console.warn("explainInsights salvage failed", error.text.slice(0, 300));
+      }
+      console.warn("explainInsights failed", message);
       return { items: [], degraded: true, error: message };
     }
   });
