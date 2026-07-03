@@ -13,13 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
+
 import { useRequestsStore } from "@/lib/requests-store";
 import { getUrgency, urgencyRank } from "@/lib/urgency";
 import type { Request, Status } from "@/lib/requests-types";
@@ -49,7 +44,7 @@ export const Route = createFileRoute("/")({
 });
 
 type Filter = Status | "All";
-type SortKey = "urgency" | "neededBy";
+
 
 const filters: Filter[] = [
   "All",
@@ -65,7 +60,7 @@ function Dashboard() {
   const boqLines = useRequestsStore((s) => s.boqLines);
 
   const [filter, setFilter] = useState<Filter>("All");
-  const [sort, setSort] = useState<SortKey>("urgency");
+  
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -98,19 +93,16 @@ function Dashboard() {
       );
     }
     const sorted = [...rows];
-    if (sort === "urgency") {
-      sorted.sort((a, b) => {
-        const ua = getUrgency(a.neededBy);
-        const ub = getUrgency(b.neededBy);
-        const r = urgencyRank[ua.level] - urgencyRank[ub.level];
-        if (r !== 0) return r;
-        return +new Date(a.neededBy) - +new Date(b.neededBy);
-      });
-    } else if (sort === "neededBy") {
-      sorted.sort((a, b) => +new Date(a.neededBy) - +new Date(b.neededBy));
-    }
+    sorted.sort((a, b) => {
+      const ua = getUrgency(a.neededBy);
+      const ub = getUrgency(b.neededBy);
+      const r = urgencyRank[ua.level] - urgencyRank[ub.level];
+      if (r !== 0) return r;
+      return +new Date(a.neededBy) - +new Date(b.neededBy);
+    });
     return sorted;
-  }, [requests, filter, sort, query]);
+  }, [requests, filter, query]);
+
 
   const selected = requests.find((r) => r.id === selectedId) ?? null;
 
@@ -183,18 +175,13 @@ function Dashboard() {
                 className="pl-8 w-64"
               />
             </div>
-            <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="urgency">Sort: Urgency</SelectItem>
-                <SelectItem value="neededBy">Sort: Needed-by</SelectItem>
-                
-              </SelectContent>
-            </Select>
           </div>
         </div>
+
+
+
+
+
 
         {/* Table */}
         <div className="rounded-md border bg-card">
