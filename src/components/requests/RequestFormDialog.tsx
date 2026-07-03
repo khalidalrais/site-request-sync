@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -23,6 +23,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRequestsStore } from "@/lib/requests-store";
+import { seedEngineers, seedSites } from "@/lib/seed-data";
 import type { Request, NewRequestInput } from "@/lib/requests-types";
 import { toast } from "sonner";
 
@@ -32,14 +33,16 @@ type Props = {
   editing?: Request | null;
 };
 
+const OTHER = "__other__";
+
 const defaultInput: NewRequestInput = {
   item: "",
   qty: 0,
-  unit: "pcs",
-  site: "",
+  unit: "",
+  site: seedSites[0],
   neededBy: new Date().toISOString(),
   boqLineId: "",
-  requestedBy: "Eng. A. Khan",
+  requestedBy: seedEngineers[0],
 };
 
 export function RequestFormDialog({ open, onOpenChange, editing }: Props) {
@@ -48,25 +51,43 @@ export function RequestFormDialog({ open, onOpenChange, editing }: Props) {
   const updateRequest = useRequestsStore((s) => s.updateRequest);
   const resubmit = useRequestsStore((s) => s.resubmit);
 
-  const initial = useMemo<NewRequestInput>(() => {
-    if (!editing) return defaultInput;
-    return {
-      item: editing.item,
-      qty: editing.qty,
-      unit: editing.unit,
-      site: editing.site,
-      neededBy: editing.neededBy,
-      boqLineId: editing.boqLineId,
-      requestedBy: editing.requestedBy,
-    };
-  }, [editing]);
-
-  const [form, setForm] = useState<NewRequestInput>(initial);
+  const [form, setForm] = useState<NewRequestInput>(defaultInput);
+  const [siteMode, setSiteMode] = useState<"pick" | "other">("pick");
+  const [engineerMode, setEngineerMode] = useState<"pick" | "other">("pick");
 
   // Reset when opened / editing target changes
-  useMemo(() => {
-    setForm(initial);
-  }, [initial, open]);
+  useEffect(() => {
+    if (!open) return;
+    if (editing) {
+      setForm({
+        item: editing.item,
+        qty: editing.qty,
+        unit: editing.unit,
+        site: editing.site,
+        neededBy: editing.neededBy,
+        boqLineId: editing.boqLineId,
+        requestedBy: editing.requestedBy,
+      });
+      setSiteMode(seedSites.includes(editing.site) ? "pick" : "other");
+      setEngineerMode(seedEngineers.includes(editing.requestedBy) ? "pick" : "other");
+    } else {
+      setForm(defaultInput);
+      setSiteMode("pick");
+      setEngineerMode("pick");
+    }
+  }, [editing, open]);
+
+  const selectedBoq = useMemo(
+    () => boqLines.find((l) => l.id === form.boqLineId) ?? null,
+    [boqLines, form.boqLineId],
+  );
+
+  // Enforce unit = BoQ unit whenever a BoQ is selected
+  useEffect(() => {
+    if (selectedBoq && form.unit !== selectedBoq.unit) {
+      setForm((f) => ({ ...f, unit: selectedBoq.unit }));
+    }
+  }, [selectedBoq]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isEdit = !!editing;
 
@@ -113,6 +134,26 @@ export function RequestFormDialog({ open, onOpenChange, editing }: Props) {
 
         <div className="grid gap-4 py-2">
           <div className="grid gap-2">
+            <Label>BoQ line</Label>
+            <Select
+              value={form.boqLineId}
+              onValueChange={(v) => setForm({ ...form, boqLineId: v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a BoQ line" />
+              </SelectTrigger>
+              <SelectContent>
+                {boqLines.map((l) => (
+                  <SelectItem key={l.id} value={l.id}>
+                    <span className="font-mono text-xs mr-2">{l.id}</span>
+                    {l.description}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid gap-2">
             <Label htmlFor="item">Item</Label>
             <Input
               id="item"
@@ -139,20 +180,52 @@ export function RequestFormDialog({ open, onOpenChange, editing }: Props) {
               <Input
                 id="unit"
                 value={form.unit}
-                onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                placeholder="m³, ton, pcs"
+                readOnly
+                disabled
+                placeholder={selectedBoq ? "" : "Select a BoQ line first"}
               />
+              {selectedBoq && (
+                <p className="text-xs text-muted-foreground">
+                  Locked to BoQ unit ({selectedBoq.unit}).
+                </p>
+              )}
             </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="site">Site / location</Label>
-            <Input
-              id="site"
-              value={form.site}
-              onChange={(e) => setForm({ ...form, site: e.target.value })}
-              placeholder="Tower B – L4"
-            />
+            <Label>Site / location</Label>
+            <Select
+              value={siteMode === "other" ? OTHER : form.site}
+              onValueChange={(v) => {
+                if (v === OTHER) {
+                  setSiteMode("other");
+                  setForm({ ...form, site: "" });
+                } else {
+                  setSiteMode("pick");
+                  setForm({ ...form, site: v });
+                }
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a site" />
+              </SelectTrigger>
+              <SelectContent>
+                {seedSites.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+                <SelectItem value={OTHER}>Other / new…</SelectItem>
+              </SelectContent>
+            </Select>
+            {siteMode === "other" && (
+              <Input
+                autoFocus
+                value={form.site}
+                onChange={(e) => setForm({ ...form, site: e.target.value })}
+                placeholder="New site / location"
+              />
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -182,33 +255,40 @@ export function RequestFormDialog({ open, onOpenChange, editing }: Props) {
               </Popover>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="requestedBy">Requested by</Label>
-              <Input
-                id="requestedBy"
-                value={form.requestedBy}
-                onChange={(e) => setForm({ ...form, requestedBy: e.target.value })}
-              />
+              <Label>Requested by</Label>
+              <Select
+                value={engineerMode === "other" ? OTHER : form.requestedBy}
+                onValueChange={(v) => {
+                  if (v === OTHER) {
+                    setEngineerMode("other");
+                    setForm({ ...form, requestedBy: "" });
+                  } else {
+                    setEngineerMode("pick");
+                    setForm({ ...form, requestedBy: v });
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select engineer" />
+                </SelectTrigger>
+                <SelectContent>
+                  {seedEngineers.map((e) => (
+                    <SelectItem key={e} value={e}>
+                      {e}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value={OTHER}>Other / new…</SelectItem>
+                </SelectContent>
+              </Select>
+              {engineerMode === "other" && (
+                <Input
+                  autoFocus
+                  value={form.requestedBy}
+                  onChange={(e) => setForm({ ...form, requestedBy: e.target.value })}
+                  placeholder="New engineer name"
+                />
+              )}
             </div>
-          </div>
-
-          <div className="grid gap-2">
-            <Label>BoQ line</Label>
-            <Select
-              value={form.boqLineId}
-              onValueChange={(v) => setForm({ ...form, boqLineId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a BoQ line" />
-              </SelectTrigger>
-              <SelectContent>
-                {boqLines.map((l) => (
-                  <SelectItem key={l.id} value={l.id}>
-                    <span className="font-mono text-xs mr-2">{l.id}</span>
-                    {l.description}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
         </div>
 

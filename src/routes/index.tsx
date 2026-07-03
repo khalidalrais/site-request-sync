@@ -49,7 +49,7 @@ export const Route = createFileRoute("/")({
 });
 
 type Filter = Status | "All";
-type SortKey = "urgency" | "neededBy" | "created";
+type SortKey = "urgency" | "neededBy";
 
 const filters: Filter[] = [
   "All",
@@ -108,8 +108,6 @@ function Dashboard() {
       });
     } else if (sort === "neededBy") {
       sorted.sort((a, b) => +new Date(a.neededBy) - +new Date(b.neededBy));
-    } else {
-      sorted.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
     }
     return sorted;
   }, [requests, filter, sort, query]);
@@ -192,7 +190,7 @@ function Dashboard() {
               <SelectContent>
                 <SelectItem value="urgency">Sort: Urgency</SelectItem>
                 <SelectItem value="neededBy">Sort: Needed-by</SelectItem>
-                <SelectItem value="created">Sort: Created</SelectItem>
+                
               </SelectContent>
             </Select>
           </div>
