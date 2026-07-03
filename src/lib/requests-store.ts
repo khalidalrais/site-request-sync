@@ -55,9 +55,46 @@ export const useRequestsStore = create<State>((set, get) => ({
 
   updateRequest: (id, input) => {
     set((s) => ({
-      requests: s.requests.map((r) => (r.id === id ? { ...r, ...input } : r)),
+      requests: s.requests.map((r) => {
+        if (r.id !== id) return r;
+        if (r.status !== "Requested" && r.status !== "Rejected") {
+          console.warn(
+            `updateRequest blocked: ${r.id} is ${r.status}; edits only allowed on Requested or Rejected.`,
+          );
+          return r;
+        }
+        const fields: (keyof NewRequestInput)[] = [
+          "item",
+          "qty",
+          "unit",
+          "site",
+          "neededBy",
+          "boqLineId",
+          "requestedBy",
+        ];
+        const changes: string[] = [];
+        for (const f of fields) {
+          const before = r[f];
+          const after = input[f];
+          if (before !== after) {
+            const fmt = (v: unknown) =>
+              f === "neededBy" && typeof v === "string"
+                ? new Date(v).toISOString().slice(0, 10)
+                : String(v);
+            changes.push(`${f}: ${fmt(before)} → ${fmt(after)}`);
+          }
+        }
+        if (changes.length === 0) return r;
+        return appendHistory({ ...r, ...input }, {
+          at: nowISO(),
+          actor: input.requestedBy || r.requestedBy,
+          action: "Edited request",
+          comment: changes.join("; "),
+        });
+      }),
     }));
   },
+
 
   approve: (id) => {
     set((s) => {

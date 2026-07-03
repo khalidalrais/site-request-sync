@@ -146,9 +146,11 @@ export function RequestFormDialog({ open, onOpenChange, editing }: Props) {
                 {boqLines.map((l) => (
                   <SelectItem key={l.id} value={l.id}>
                     <span className="font-mono text-xs mr-2">{l.id}</span>
-                    {l.description}
+                    <span>{l.description}</span>
+                    <span className="ml-2 text-muted-foreground">· {l.unit}</span>
                   </SelectItem>
                 ))}
+
               </SelectContent>
             </Select>
           </div>
