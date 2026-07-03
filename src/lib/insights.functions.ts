@@ -72,22 +72,30 @@ ${lines}`;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       if (NoObjectGeneratedError.isInstance(error) && error.text) {
-        // Try to salvage: strip code fences, parse JSON, coerce to schema.
         const raw = error.text.replace(/```json|```/g, "").trim();
         try {
           const parsed = JSON.parse(raw);
-          const arr = Array.isArray(parsed) ? parsed : parsed.items ?? [];
+          const arr: unknown[] = Array.isArray(parsed)
+            ? parsed
+            : Array.isArray((parsed as { items?: unknown[] }).items)
+              ? (parsed as { items: unknown[] }).items
+              : [];
           const items = arr
-            .map((x: unknown) => {
+            .map((x, i) => {
               if (!x || typeof x !== "object") return null;
               const o = x as Record<string, unknown>;
-              const id = o.boqLineId ?? o.id;
+              const id =
+                typeof o.boqLineId === "string"
+                  ? o.boqLineId
+                  : typeof o.id === "string"
+                    ? o.id
+                    : data.items[i]?.boqLineId; // positional fallback
               const headline = o.headline ?? o.title;
               const body = o.body ?? o.description ?? o.summary;
               if (typeof id !== "string" || typeof headline !== "string" || typeof body !== "string") return null;
               return { boqLineId: id, headline, body };
             })
-            .filter((x: InsightNarrative | null): x is InsightNarrative => x !== null);
+            .filter((x): x is InsightNarrative => x !== null);
           if (items.length > 0) return { items, degraded: false };
         } catch {
           /* fall through */
