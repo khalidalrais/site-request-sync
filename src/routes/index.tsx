@@ -178,18 +178,8 @@ function Dashboard() {
                 className="pl-8 w-64"
               />
             </div>
-            <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="urgency">Sort: Urgency</SelectItem>
-                <SelectItem value="neededBy">Sort: Needed-by</SelectItem>
-                
-              </SelectContent>
-            </Select>
           </div>
-        </div>
+
 
         {/* Table */}
         <div className="rounded-md border bg-card">
