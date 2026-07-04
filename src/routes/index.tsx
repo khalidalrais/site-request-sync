@@ -129,7 +129,7 @@ function Dashboard() {
               Site engineers submit · PMs approve · Procurement orders · Site receives
             </p>
             <p className="text-xs text-muted-foreground/70 mt-1">
-              Changed by Claude Code
+              Test change active
             </p>
           </div>
           <Button onClick={openNew}>
