@@ -128,6 +128,9 @@ function Dashboard() {
             <p className="text-sm text-muted-foreground">
               Site engineers submit · PMs approve · Procurement orders · Site receives
             </p>
+            <p className="text-xs text-muted-foreground/70 mt-1">
+              Changed by Claude Code
+            </p>
           </div>
           <Button onClick={openNew}>
             <Plus className="mr-2 h-4 w-4" /> New request
